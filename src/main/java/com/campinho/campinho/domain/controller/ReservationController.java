@@ -1,0 +1,42 @@
+package com.campinho.campinho.domain.controller;
+
+import com.campinho.campinho.domain.entity.Reservation;
+import com.campinho.campinho.domain.request.CreateReservationRequest;
+import com.campinho.campinho.domain.service.ReservationService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Controller
+@RequestMapping("/api/reservation")
+public class ReservationController {
+
+    @Autowired
+    private ReservationService reservationService;
+
+    @PostMapping
+    public ResponseEntity<UUID> createReservation(@RequestBody @Valid CreateReservationRequest data) {
+        var reservationId = reservationService.createReservation(data);
+
+        var uri = URI.create("/api/reservation/" + reservationId);
+
+        return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<Reservation> getReservationById(@PathVariable("reservationId") String reservationId) {
+        var reservation = reservationService.getReservationById(reservationId);
+
+        if (reservation.isPresent()) {
+            return ResponseEntity.ok(reservation.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
