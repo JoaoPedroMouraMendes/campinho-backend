@@ -18,6 +18,16 @@ public class ReservationService {
 
     public UUID createReservation(CreateReservationRequest data) {
 
+        // Validação do horário
+        if(!isValidReservationTime(data.startTime(), data.endTime()))
+            throw new IllegalArgumentException("O horário de inicio deve ser antes do horário de termino");
+
+        // Validação da disponibilidade
+        if(findReservationInRange(data.startTime(), data.endTime(),
+                reservationRepository.findReservationsNotExpired(LocalDateTime.now())) != null) {
+            throw new IllegalArgumentException("O horário desta reserva está chocando com outra");
+        }
+
         var newReservation = new Reservation(data);
 
         var reservationSaved = reservationRepository.save(newReservation);

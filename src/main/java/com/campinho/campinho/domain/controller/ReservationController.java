@@ -21,12 +21,15 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<UUID> createReservation(@RequestBody @Valid CreateReservationRequest data) {
-        var reservationId = reservationService.createReservation(data);
+    public ResponseEntity<String> createReservation(@RequestBody @Valid CreateReservationRequest data) {
+        try {
+            var reservationId = reservationService.createReservation(data);
+            var uri = URI.create("/api/reservation/" + reservationId);
+            return ResponseEntity.created(uri).build();
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        var uri = URI.create("/api/reservation/" + reservationId);
-
-        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/{reservationId}")
