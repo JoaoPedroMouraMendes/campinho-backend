@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/api/reservation")
+@RequestMapping("/api")
 public class ReservationController {
 
     @Autowired
     private ReservationService reservationService;
 
-    @PostMapping
+    @PostMapping("/reservation")
     public ResponseEntity<String> createReservation(@RequestBody @Valid CreateReservationRequest data) {
         try {
             var reservationId = reservationService.createReservation(data);
@@ -32,7 +32,7 @@ public class ReservationController {
 
     }
 
-    @GetMapping("/{reservationId}")
+    @GetMapping("reservation/{reservationId}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable("reservationId") String reservationId) {
         var reservation = reservationService.getReservationById(reservationId);
 
