@@ -32,7 +32,7 @@ public class ReservationController {
 
     }
 
-    @GetMapping("reservation/{reservationId}")
+    @GetMapping("/reservation/{reservationId}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable("reservationId") String reservationId) {
         var reservation = reservationService.getReservationById(reservationId);
 
