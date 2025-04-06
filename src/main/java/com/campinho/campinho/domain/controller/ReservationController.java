@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -41,5 +42,12 @@ public class ReservationController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/reservations/active")
+    public ResponseEntity<List<Reservation>> getActiveReservations() {
+        var activeReservations = reservationService.getActiveReservations();
+
+        return ResponseEntity.ok(activeReservations);
     }
 }

@@ -39,6 +39,10 @@ public class ReservationService {
         return reservationRepository.findById(UUID.fromString(reservationId));
     }
 
+    public List<Reservation> getActiveReservations() {
+        return reservationRepository.findReservationsNotExpired(LocalDateTime.now());
+    }
+
     private Reservation findReservationInRange(LocalDateTime startTime, LocalDateTime endTime, List<Reservation> reservations) {
         for(Reservation reservation : reservations)
             if (reservation.getEndTime().isAfter(startTime) && reservation.getStartTime().isBefore(endTime))
