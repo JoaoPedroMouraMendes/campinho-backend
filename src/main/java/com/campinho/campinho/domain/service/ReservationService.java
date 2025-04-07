@@ -43,6 +43,10 @@ public class ReservationService {
         return reservationRepository.findReservationsNotExpired(LocalDateTime.now());
     }
 
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
+
     private Reservation findReservationInRange(LocalDateTime startTime, LocalDateTime endTime, List<Reservation> reservations) {
         for(Reservation reservation : reservations)
             if (reservation.getEndTime().isAfter(startTime) && reservation.getStartTime().isBefore(endTime))

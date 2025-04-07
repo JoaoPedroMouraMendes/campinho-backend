@@ -50,4 +50,11 @@ public class ReservationController {
 
         return ResponseEntity.ok(activeReservations);
     }
+
+    @GetMapping("/reservations")
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+        var allReservations = reservationService.getAllReservations();
+
+        return ResponseEntity.ok(allReservations);
+    }
 }
