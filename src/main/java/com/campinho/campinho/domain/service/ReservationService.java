@@ -23,13 +23,11 @@ public class ReservationService {
 
         // Validação do horário
         if(!isValidReservationTime(data.startTime(), data.endTime()))
-            throw new IllegalArgumentException("O horário de inicio deve ser antes do horário de termino");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário de inicio deve ser antes do horário de termino");
 
         // Validação da disponibilidade
-        if(findReservationInRange(data.startTime(), data.endTime(),
-                reservationRepository.findReservationsNotExpired(LocalDateTime.now())) != null) {
-            throw new IllegalArgumentException("O horário desta reserva está chocando com outra");
-        }
+        if(findReservationInRange(data.startTime(), data.endTime(), reservationRepository.findReservationsNotExpired(LocalDateTime.now())) != null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário desta reserva está indisponível");
 
         var newReservation = new Reservation(data);
 
