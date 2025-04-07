@@ -42,7 +42,7 @@ public class ReservationService {
         try {
             return reservationRepository.findById(UUID.fromString(reservationId));
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id inválido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id inválido");
         }
     }
 
