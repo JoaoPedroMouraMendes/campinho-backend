@@ -4,7 +4,10 @@ import com.campinho.campinho.domain.request.CreateReservationRequest;
 import com.campinho.campinho.domain.entity.Reservation;
 import com.campinho.campinho.domain.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +48,14 @@ public class ReservationService {
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
+    }
+
+    public void deleteReservationById(String reservationId) {
+        var reservation = getReservationById(reservationId);
+
+        if (reservation.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada com o Id: " + reservationId);
+
+        reservationRepository.delete(reservation.get());
     }
 
     private Reservation findReservationInRange(LocalDateTime startTime, LocalDateTime endTime, List<Reservation> reservations) {

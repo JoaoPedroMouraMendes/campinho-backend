@@ -9,10 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.lang.model.type.NullType;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/api")
@@ -56,5 +55,12 @@ public class ReservationController {
         var allReservations = reservationService.getAllReservations();
 
         return ResponseEntity.ok(allReservations);
+    }
+
+    @DeleteMapping("/reservation/{reservationId}")
+    public ResponseEntity<NullType> deleteReservationById(@PathVariable("reservationId") String reservationId) {
+        reservationService.deleteReservationById(reservationId);
+
+        return ResponseEntity.ok().build();
     }
 }
