@@ -39,7 +39,11 @@ public class ReservationService {
     }
 
     public Optional<Reservation> getReservationById(String reservationId) {
-        return reservationRepository.findById(UUID.fromString(reservationId));
+        try {
+            return reservationRepository.findById(UUID.fromString(reservationId));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id inválido");
+        }
     }
 
     public List<Reservation> getActiveReservations() {
