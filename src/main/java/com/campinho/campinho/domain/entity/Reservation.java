@@ -7,7 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,6 +34,9 @@ public class Reservation {
 
     @NotNull(message = "endTime não pode ser nulo")
     private LocalDateTime endTime;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     // Construtor que converte de CreateReservationRequest para Reservation
     public Reservation(CreateReservationRequest data) {
