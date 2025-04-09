@@ -3,6 +3,7 @@ package com.campinho.campinho.domain.service;
 import com.campinho.campinho.domain.request.CreateReservationRequest;
 import com.campinho.campinho.domain.entity.Reservation;
 import com.campinho.campinho.domain.repository.ReservationRepository;
+import com.campinho.campinho.domain.request.UpdateReservationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,36 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
+    public void updateReservationById(String reservationId, UpdateReservationRequest newData) {
+        var optionalReservation = getReservationById(reservationId);
+
+        if (optionalReservation.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada com o Id: " + reservationId);
+
+        var reservation = optionalReservation.get();
+
+        // Validação de horário e de disponibilidade
+        if (newData.startTime() != null || newData.endTime() != null) {
+            LocalDateTime newStartTime = newData.startTime() != null ? newData.startTime() : reservation.getStartTime();
+            LocalDateTime newEndTime = newData.endTime() != null ? newData.endTime() : reservation.getEndTime();
+
+            if (!isValidReservationTime(newStartTime, newEndTime))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário de inicio deve ser antes do horário de termino");
+
+            var activeReservation = findActiveReservationInRange(newStartTime, newEndTime);
+            if (activeReservation != null && activeReservation.getId() != reservation.getId())
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O horário desta reserva está indisponível");
+
+            // Altera dados de horário
+            reservation.setStartTime(newStartTime);
+            reservation.setEndTime(newEndTime);
+        }
+
+        // Alteração do nome de quem reservou
+        if (newData.reservedBy() != null) reservation.setReservedBy(newData.reservedBy());
+
+        reservationRepository.save(reservation);
+    }
+
     public void deleteReservationById(String reservationId) {
         var reservation = getReservationById(reservationId);
 
@@ -66,6 +97,10 @@ public class ReservationService {
                 return reservation;
 
         return null;
+    }
+
+    private Reservation findActiveReservationInRange(LocalDateTime startTime, LocalDateTime endTime) {
+        return findReservationInRange(startTime, endTime, reservationRepository.findReservationsNotExpired(LocalDateTime.now()));
     }
 
     private boolean isValidReservationTime(LocalDateTime startTime, LocalDateTime endTime) {

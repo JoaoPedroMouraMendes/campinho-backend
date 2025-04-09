@@ -2,6 +2,7 @@ package com.campinho.campinho.domain.controller;
 
 import com.campinho.campinho.domain.entity.Reservation;
 import com.campinho.campinho.domain.request.CreateReservationRequest;
+import com.campinho.campinho.domain.request.UpdateReservationRequest;
 import com.campinho.campinho.domain.service.ReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,13 @@ public class ReservationController {
         var allReservations = reservationService.getAllReservations();
 
         return ResponseEntity.ok(allReservations);
+    }
+
+    @PutMapping("/reservation/{reservationId}")
+    public ResponseEntity<NullType> updateReservationById(@PathVariable("reservationId") String reservationId, @RequestBody @Valid UpdateReservationRequest newData) {
+        reservationService.updateReservationById(reservationId, newData);
+
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/reservation/{reservationId}")
