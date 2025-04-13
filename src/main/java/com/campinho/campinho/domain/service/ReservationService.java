@@ -37,9 +37,14 @@ public class ReservationService {
         return reservationSaved.getId();
     }
 
-    public Optional<Reservation> getReservationById(String reservationId) {
+    public Reservation getReservationById(String reservationId) {
         try {
-            return reservationRepository.findById(UUID.fromString(reservationId));
+            var optionalReservation = reservationRepository.findById(UUID.fromString(reservationId));
+
+            if (optionalReservation.isEmpty())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada");
+
+            return optionalReservation.get();
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id inválido");
         }
@@ -54,11 +59,7 @@ public class ReservationService {
     }
 
     public void updateReservationById(String reservationId, UpdateReservationRequest newData) {
-        var optionalReservation = getReservationById(reservationId);
-
-        if (optionalReservation.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada com o Id: " + reservationId);
-
-        var reservation = optionalReservation.get();
+        var reservation = getReservationById(reservationId);
 
         // Validação de horário e de disponibilidade
         if (newData.startTime() != null || newData.endTime() != null) {
@@ -86,9 +87,7 @@ public class ReservationService {
     public void deleteReservationById(String reservationId) {
         var reservation = getReservationById(reservationId);
 
-        if (reservation.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada com o Id: " + reservationId);
-
-        reservationRepository.delete(reservation.get());
+        reservationRepository.delete(reservation);
     }
 
     private Reservation findReservationInRange(LocalDateTime startTime, LocalDateTime endTime, List<Reservation> reservations) {
