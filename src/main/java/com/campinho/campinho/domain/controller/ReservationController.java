@@ -32,11 +32,7 @@ public class ReservationController {
     public ResponseEntity<Reservation> getReservationById(@PathVariable("reservationId") String reservationId) {
         var reservation = reservationService.getReservationById(reservationId);
 
-        if (reservation.isPresent()) {
-            return ResponseEntity.ok(reservation.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(reservation);
     }
 
     @GetMapping("/reservations/active")
