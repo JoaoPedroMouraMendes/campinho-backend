@@ -10,6 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReservationRepository extends JpaRepository<Reservation, UUID> {
-    @Query("SELECT r FROM Reservation r WHERE r.endTime >= :now")
+    @Query("SELECT r FROM Reservation r WHERE r.endTime >= :now ORDER BY r.startTime ASC")
     List<Reservation> findReservationsNotExpired(@Param("now") LocalDateTime now);
 }
