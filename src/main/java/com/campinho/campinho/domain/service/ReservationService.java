@@ -19,7 +19,7 @@ public class ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
-
+    // TODO ADICIONAR REGRA PARA NÃO CRIAR RESERVAS EM UM DIA QUE JÁ PASSOU
     public UUID createReservation(CreateReservationRequest data) {
 
         // Validação do horário
@@ -58,6 +58,7 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
+    // TODO ADICIONAR REGRA PARA NÃO CRIAR RESERVAS EM UM DIA QUE JÁ PASSOU
     public void updateReservationById(String reservationId, UpdateReservationRequest newData) {
         var reservation = getReservationById(reservationId);
 
